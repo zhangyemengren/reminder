@@ -1,5 +1,4 @@
 import {useState} from "react";
-import reactLogo from "./assets/react.svg";
 import {invoke} from "@tauri-apps/api/core";
 import "./App.css";
 
@@ -7,14 +6,21 @@ function App() {
     const [greetMsg, setGreetMsg] = useState("");
     const [name, setName] = useState("");
 
-    async function greet() {
-        // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-        setGreetMsg(await invoke("greet", {name}));
+    async function sendNotification() {
+        await invoke("send_notification", {title: "Hello", body: "World"});
     }
 
     return (
         <main className="container">
-            <div>12345</div>
+            <button onClick={sendNotification}>Send Notification</button>
+            <div>
+                <div>喝水倒计时</div>
+                <div>10分钟</div>
+            </div>
+            <div>
+                <div>撒尿倒计时</div>
+                <div>10分钟</div>
+            </div>
         </main>
     );
 }
