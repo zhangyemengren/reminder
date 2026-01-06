@@ -10,9 +10,3 @@ pub fn send_notification(app: tauri::AppHandle, title: &str, body: &str) {
         .show()
         .unwrap();
 }
-
-
-#[tauri::command]
-pub fn count_down(app: tauri::AppHandle) {
-    // TODO
-}

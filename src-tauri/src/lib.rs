@@ -1,18 +1,20 @@
-mod commands;
+mod notification;
+mod timer;
 mod tray;
 mod window;
 
-use crate::commands::{count_down, send_notification};
-use tauri::{
-    Manager, RunEvent,
-};
+use tauri::{Manager, RunEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![send_notification, count_down])
+        .invoke_handler(tauri::generate_handler![
+            notification::send_notification,
+            timer::start_time_task
+        ])
+        .manage(timer::TimeState::new())
         .setup(|app| {
             // 1. 初始化托盘
             tray::create_tray(app)?;
@@ -27,10 +29,13 @@ pub fn run() {
         });
 }
 
-fn handle_app_lifecycle<R: tauri::Runtime>(app_handle: &tauri::AppHandle<R>, event: tauri::RunEvent) {
+fn handle_app_lifecycle(app_handle: &tauri::AppHandle, event: tauri::RunEvent) {
     match event {
         #[cfg(target_os = "macos")]
-        RunEvent::Reopen { has_visible_windows, .. } => {
+        RunEvent::Reopen {
+            has_visible_windows,
+            ..
+        } => {
             if !has_visible_windows {
                 if let Some(window) = app_handle.get_webview_window("main") {
                     window.show().unwrap();
