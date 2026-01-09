@@ -4,7 +4,7 @@ import { listen } from '@tauri-apps/api/event';
 import "./App.css";
 
 function App() {
-    const [count, setCount] = useState(10);
+    const [count, setCount] = useState(5);
 
     async function sendNotification() {
         await invoke("send_notification", {title: "Hello", body: "World"});
@@ -15,8 +15,13 @@ function App() {
 
     useEffect(() => {
         let unsubscribe;
-        listen("time-tick", (event) => {
-            setCount(event.payload);
+        invoke("get_event_key").then((key) => {
+            return listen(key, (event) => {
+                setCount(event.payload);
+                if (event.payload === 0) {
+                    sendNotification()
+                }
+            })
         }).then((fn) => {
             unsubscribe = fn;
         });
@@ -28,7 +33,6 @@ function App() {
 
     return (
         <main className="container">
-            <button onClick={sendNotification}>Send Notification</button>
             <button onClick={startTimer}>Start Timer</button>
             <div>
                 <div>喝水倒计时</div>

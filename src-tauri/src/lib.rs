@@ -2,6 +2,7 @@ mod notification;
 mod timer;
 mod tray;
 mod window;
+mod store;
 
 use tauri::{Manager, RunEvent};
 
@@ -10,9 +11,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             notification::send_notification,
-            timer::start_time_task
+            timer::start_time_task,
+            timer::get_event_key,
         ])
         .manage(timer::TimeState::new())
         .setup(|app| {
