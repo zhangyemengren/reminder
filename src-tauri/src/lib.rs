@@ -1,8 +1,8 @@
 mod notification;
+mod store;
 mod timer;
 mod tray;
 mod window;
-mod store;
 
 use tauri::{Manager, RunEvent};
 
@@ -16,12 +16,15 @@ pub fn run() {
             notification::send_notification,
             timer::start_time_task,
             timer::get_event_key,
+            store::get_store_value,
+            store::set_store_value,
         ])
         .manage(timer::TimeState::new())
         .setup(|app| {
             // 1. 初始化托盘
-            tray::create_tray(app)?;
-
+            tray::create(app)?;
+            // 2. 初始化持久数据
+            store::AppStore::create(app)?;
             Ok(())
         })
         .on_window_event(window::handle_event)

@@ -4,7 +4,7 @@ use tauri::{
     AppHandle, Manager, Runtime,
 };
 
-pub fn create_tray(app: &mut tauri::App) -> tauri::Result<TrayIcon> {
+pub fn create(app: &mut tauri::App) -> tauri::Result<TrayIcon> {
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&quit_item])?;
 
