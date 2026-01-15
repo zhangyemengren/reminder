@@ -1,7 +1,7 @@
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{TrayIcon, TrayIconBuilder},
-    AppHandle, Manager, Runtime,
+    AppHandle,
 };
 
 pub fn create(app: &mut tauri::App) -> tauri::Result<TrayIcon> {

@@ -15,16 +15,25 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             notification::send_notification,
             timer::start_time_task,
-            timer::get_event_key,
+            timer::pause_time_task,
+            timer::resume_time_task,
+            timer::stop_time_task,
             store::get_store_value,
             store::set_store_value,
         ])
-        .manage(timer::TimeState::new())
+        .manage(timer::TimeManager::new())
         .setup(|app| {
             // 1. 初始化托盘
             tray::create(app)?;
             // 2. 初始化持久数据
             store::AppStore::create(app)?;
+            let main_window = app.get_webview_window("main").unwrap();
+            let welcome_window = app.get_webview_window("welcome").unwrap();
+            tauri::async_runtime::spawn(async move {
+                tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                welcome_window.hide().unwrap();
+                main_window.show().unwrap();
+            });
             Ok(())
         })
         .on_window_event(window::handle_event)

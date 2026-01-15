@@ -13,8 +13,19 @@
         "windows": [
             {
                 "title": "remainder",
-                "width": 200,
-                "height": 100
+                "width": 450,
+                "height": 300,
+                "minWidth": 450,
+                "minHeight": 300,
+                "visible": false
+            },
+            {
+                "label": "welcome",
+                "width": 390,
+                "height": 220,
+                "resizable": false,
+                "url": "/welcome",
+                "decorations": false
             }
         ],
         "security": {
