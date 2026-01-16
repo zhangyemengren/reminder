@@ -3,12 +3,15 @@ mod store;
 mod timer;
 mod tray;
 mod window;
+mod update;
 
 use tauri::{Manager, RunEvent};
+use update::update;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
@@ -29,10 +32,12 @@ pub fn run() {
             store::AppStore::create(app)?;
             let main_window = app.get_webview_window("main").unwrap();
             let welcome_window = app.get_webview_window("welcome").unwrap();
+            let app_handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                 welcome_window.hide().unwrap();
                 main_window.show().unwrap();
+                update(app_handle).await.unwrap();
             });
             Ok(())
         })
