@@ -247,7 +247,7 @@ function App() {
     return (
         <main className="container">
             <header className="app-header">
-                <h1>倒计时任务</h1>
+                <h1>倒计时任务 v0.1.7</h1>
                 <span className="task-count">{tasks.length} 个任务</span>
             </header>
 
